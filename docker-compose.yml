@@ -1,0 +1,32 @@
+version: "3"
+services:
+  web:
+    image: enigma-rekr-nginx:0.1
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx.crt:/etc/nginx/nginx.crt
+      - ./nginx.key:/etc/nginx/nginx.key
+    ports:
+      - "443:443"
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+  node_exporter:
+    image: prom/node-exporter
+    volumes:
+      - /:/host:ro
+    command:
+      - '--path.rootfs=/host'
+  blackbox_exporter:
+    image: prom/blackbox-exporter
+    ports:
+      - "9115:9115"
+    volumes:
+      - ./blackbox.yml:/etc/blackbox_exporter/config.yml
